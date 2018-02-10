@@ -79,11 +79,13 @@ public class MainActivity extends AppCompatActivity
     //region Button Click Region ###################################################################
     public void onClickClockIn(View view) {
         String message = "Hello World, I am Clocked In!!";
+        // TODO create time stamp
         snackBar(view, message);
     }
 
     public void onClickClockOut(View view) {
         String message = "Hello World, I am Clocked Out!!";
+        // TODO create time stamp calualte diff between clockIN()
         snackBar(view, message);
     }
     //endregion
