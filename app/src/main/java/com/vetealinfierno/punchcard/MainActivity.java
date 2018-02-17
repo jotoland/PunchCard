@@ -14,8 +14,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    String[][] timeSheet = new String[100][100];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,18 +82,42 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
     //endregion
+    public String caveManTime() {
+        Calendar c = cal();
+        int amPm = c.get(Calendar.AM_PM);
+        String sAmPm;
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        if (hour > 12) { hour = hour - 12; }
+        if (amPm == 1) { sAmPm = "PM"; } else { sAmPm = "AM"; }
+        String dayOfWeek = sDate().substring(0, sDate().indexOf(','));
+        return (
+            dayOfWeek + " " + c.get(Calendar.MONTH) + " / " + c.get(Calendar.DAY_OF_MONTH) + " / " + c.get(Calendar.YEAR)
+            + " @ " + hour + ":" + c.get(Calendar.MINUTE) + ":" + c.get(Calendar.SECOND) + "  " + sAmPm
+        );
+    }
+
+    public Calendar cal() {
+        return Calendar.getInstance();
+    }
+
+    public String sTime() {
+        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm:ss aaa", Locale.getDefault());
+        return (sdfTime.format(cal().getTime()));
+    }
+
+    public String sDate() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("E, MMM dd, yyyy", Locale.getDefault());
+        return (sdfDate.format(cal().getTime()));
+    }
 
     //region Button Click Region ###################################################################
     public void onClickClockIn(View view) {
-        String message = "Hello World, I am Clocked In!!";
         // TODO create time stamp
-        snackBar(view, message);
+        snackBar(view, "Clock IN: " + caveManTime());
     }
 
     public void onClickClockOut(View view) {
-        String message = "Hello World, I am Clocked Out!!";
-        // TODO create time stamp calualte diff between clockIN()
-        snackBar(view, message);
+        snackBar(view, "Clock OUT: " + caveManTime());
     }
     //endregion
 
@@ -96,7 +127,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void snackBar(View view, String message) {
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(view, message, 60000)
                 .setAction("Action", null).show();
     }
     //endregion
