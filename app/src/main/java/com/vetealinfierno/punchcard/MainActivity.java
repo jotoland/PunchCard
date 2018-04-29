@@ -1,5 +1,5 @@
 package com.vetealinfierno.punchcard;
-//******** 2/3/18 jGAT
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,9 +14,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    //region Private variables ####
+    private Employee emp;
+    //endregion
+
+    //region Protected OnCreate Method ####
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,22 +33,29 @@ public class MainActivity extends AppCompatActivity
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+            // This is the email button on the main activity
             @Override
             public void onClick(View view) {
-                snackBar(view, "Opening Mail");
+                snackBar(view, "Replace with your own action", true);
             }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
 
+        // TODO this needs to be done on first use of app, hook up to Firebase or Loca file?
+        emp = new Employee();
+        emp.setName("Doug Funny");
+    }
+    //endregion
+
+    //region Public OnNavigationDrawer Methods ####
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -52,7 +66,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //region Options Menu Region ###################################################################
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -74,30 +87,6 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    //endregion
-
-    //region Button Click Region ###################################################################
-    public void onClickClockIn(View view) {
-        String message = "Hello World, I am Clocked In!!";
-        snackBar(view, message);
-    }
-
-    public void onClickClockOut(View view) {
-        String message = "Hello World, I am Clocked Out!!";
-        snackBar(view, message);
-    }
-    //endregion
-
-    //region Toast/SnackBar Region #####################################################
-    public void print(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    public void snackBar(View view, String message) {
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
-    //endregion
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -107,21 +96,88 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            print("Camera Click");
         } else if (id == R.id.nav_gallery) {
-            print("Gallery Click");
+
         } else if (id == R.id.nav_slideshow) {
-            print("SlideShow Click");
+
         } else if (id == R.id.nav_manage) {
-            print("Manage Click");
+
         } else if (id == R.id.nav_share) {
-            print("Share Click");
+
         } else if (id == R.id.nav_send) {
-            print("Send Click");
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+    //endregion
+
+    //region Public Toast/SnackBar Methods ####
+    public void print(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void snackBar(View view, String message, boolean listner) {
+        if(listner) {
+            // TODO add a listner
+            Snackbar.make(view, message, 60000)
+                    .setAction("Action", null).show();
+        } else {
+            Snackbar.make(view, message, 60000).show();
+        }
+    }
+    //endregion
+
+    public String convertAMPM(int amPm) {
+        if (amPm == 1) { return "PM"; } else { return "AM"; }
+    }
+
+    public int convertHour(int hour) {
+        if (hour > 12) { return hour - 12; } else { return hour; }
+    }
+
+    public String caveManTime(boolean isClockIn, boolean empBreak) {
+        Calendar c = cal();
+        Time empTimeStamp = new Time();
+        if(empBreak) {
+            //TODO implement employee on break
+        } else {
+            if(isClockIn) {
+                empTimeStamp = emp.getClockIn();
+
+            } else {
+                empTimeStamp = emp.getClockOut();
+            }
+        }
+        int hour = convertHour(empTimeStamp.getHour());
+
+        return (
+                emp.Today().getDayOfTheWeek() + " " + emp.Today().getMonth() + " / " + emp.Today().getDay() + " / " + emp.Today().getYear()
+                        + " @ " + hour + ":" + empTimeStamp.getMin() + ":" + empTimeStamp.getSec() + "  " + convertAMPM(empTimeStamp.getAMpm())
+        );
+    }
+
+    public Calendar cal() {
+        return Calendar.getInstance();
+    }
+
+    public Time getTimeStamp() {
+        Time timeStamp = new Time();
+        timeStamp.setCurrentTime();
+        return timeStamp;
+    }
+
+    //region Public OnClick Methods ####
+    public void onClickClockIn(View view) {
+        emp.setClockIn(getTimeStamp());
+        snackBar(view, "Clock IN: " + caveManTime(true, false), false);
+    }
+
+    public void onClickClockOut(View view) {
+        emp.setClockOut(getTimeStamp());
+        snackBar(view, "Clock OUT: " + caveManTime(false, false), false);
+    }
+    //endregion
 }
