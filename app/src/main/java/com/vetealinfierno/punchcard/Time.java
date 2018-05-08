@@ -3,15 +3,17 @@ package com.vetealinfierno.punchcard;
 import java.util.Calendar;
 import static java.util.Calendar.getInstance;
 
-
 public class Time {
+
+    //region Private Variables ####
     private int Hour;
     private int Min;
     private int Sec;
     private int AMpm;
     private Calendar c;
+    //endregion
 
-
+    //region Constructor ####
     public Time() {
         Hour = 0;
         Min = 0;
@@ -19,7 +21,9 @@ public class Time {
         AMpm = 0;
         c = getInstance();
     }
+    //endregion
 
+    //region Public Getters ####
     public int getHour() {
         return Hour;
     }
@@ -35,7 +39,9 @@ public class Time {
     public int getAMpm() {
         return AMpm;
     }
+    //endregion
 
+    //region Public Setters ####
     public void setCurrentTime() {
         setHour();
         setMin();
@@ -58,4 +64,5 @@ public class Time {
     public void setAMpm() {
         AMpm = c.get(Calendar.AM_PM);
     }
+    //endregion
 }

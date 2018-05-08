@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        clkInOutBtn = (Button) findViewById(R.id.btn_clockInOutBtn);
-        brkBtn = (Button) findViewById(R.id.btn_breakBtn);
+        clkInOutBtn = (Button) findViewById(R.id.btn_breakBtn);
+        brkBtn = (Button) findViewById(R.id.btn_clockInOutBtn);
 
         if (!clkIn) {
             brkBtn.setVisibility(View.GONE);
@@ -147,19 +147,23 @@ public class MainActivity extends AppCompatActivity
     }
     //endregion
 
-    public String convertAMPM(int amPm) {
+    //region Private Methods ####
+    private String convertAMPM(int amPm) {
         if (amPm == 1) { return "PM"; } else { return "AM"; }
     }
 
-    public int convertHour(int hour) {
+    private int convertHour(int hour) {
         if (hour > 12) { return hour - 12; } else { return hour; }
     }
 
-    public String caveManTime(boolean isClockIn, boolean empBreak) {
+    private String caveManTime(boolean isClockIn, boolean empBreak, boolean brkStrt) {
         Time empTimeStamp;
         if(empBreak) {
-            //TODO implement employee on break
-            empTimeStamp = emp.getEmpBreak();
+            if(brkStrt) {
+                empTimeStamp = emp.getEmpBrkStart();
+            } else {
+                empTimeStamp = emp.getEmpBrkEnd();
+            }
         } else {
             if(isClockIn) {
                 empTimeStamp = emp.getClockIn();
@@ -176,11 +180,12 @@ public class MainActivity extends AppCompatActivity
         );
     }
 
-    public Time getTimeStamp() {
+    private Time getTimeStamp() {
         Time timeStamp = new Time();
         timeStamp.setCurrentTime();
         return timeStamp;
     }
+    //endregion
 
     //region Public OnClick Methods ####
     public void onClickClkInOutBtn(View view) {
@@ -204,27 +209,29 @@ public class MainActivity extends AppCompatActivity
             // TODO implement calculation of time
         }
 
-        snackBar(view, msgStr + ": " + caveManTime(true, false), false);
+        snackBar(view, msgStr + ": " + caveManTime(true, false, false), false);
     }
 
     public void onClickBrkBtn(View view) {
         // TODO implement taking a break
+        boolean brkStart = false;
         String msgStr;
         if (!onBrk) {
+            brkStart = true;
             onBrk = true;
-            emp.setEmpBreak(getTimeStamp());
+            emp.setEmpBrkStart(getTimeStamp());
             brkBtnStr = "End Break";
             brkBtn.setText(brkBtnStr);
             msgStr = "Break Start";
         } else {
             onBrk = false;
             // TODO need to refactor this to setEmpBrkStart / setEmpBreakEnd maybe ? or just do the math ?
-            emp.setEmpBreak(getTimeStamp());
+            emp.setEmpBrkEnd(getTimeStamp());
             brkBtnStr = "Take a Break";
             brkBtn.setText(brkBtnStr);
             msgStr = "Break End";
         }
-        snackBar(view, msgStr + ": " + caveManTime(false, true), false);
+        snackBar(view, msgStr + ": " + caveManTime(false, true, brkStart), false);
     }
     //endregion
 }

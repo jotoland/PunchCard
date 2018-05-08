@@ -3,11 +3,13 @@ package com.vetealinfierno.punchcard;
 
 // Employee is for each user, stores name, timeIN/Out and breaks
 public class Employee {
+
     //region Private Vars ####
     private String Name;
     private Time clockIn;
     private Time clockOut;
-    private Time empBreak;
+    private Time empBrkStart;
+    private Time empBrkEnd;
     private Day today;
     //endregion
 
@@ -16,15 +18,16 @@ public class Employee {
         Name = "";
         clockIn = new Time();
         clockOut = new Time();
-        empBreak = new Time();
+        empBrkStart = new Time();
+        empBrkEnd = new Time();
         today = new Day();
     }
     //endregion
 
+    //region Public Getters ####
     public Day Today() {
         return today;
     }
-
 
     public String getName() {
         return Name;
@@ -38,10 +41,14 @@ public class Employee {
         return clockOut;
     }
 
-    public Time getEmpBreak() {
-        return empBreak;
+    public Time getEmpBrkStart() {
+        return empBrkStart;
     }
 
+    public Time getEmpBrkEnd() { return empBrkEnd; }
+    //endregion
+
+    //region Public Setters ####
     public void setName(String name) {
         Name = name;
     }
@@ -54,7 +61,10 @@ public class Employee {
         this.clockOut = clockOut;
     }
 
-    public void setEmpBreak(Time empBreak) {
-        this.empBreak = empBreak;
+    public void setEmpBrkStart(Time empBrkStart) {
+        this.empBrkStart = empBrkStart;
     }
+
+    public void setEmpBrkEnd(Time empBrkEnd) { this.empBrkEnd = empBrkEnd; }
+    //endregion
 }

@@ -7,13 +7,16 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class Day {
+
+    //region Private Variables ####
+    private Calendar c;
     private String DayOfTheWeek;
     private int Month;
     private int Day;
     private int Year;
+    //endregion
 
-    private Calendar c;
-
+    //regionn Constructor ####
     public Day() {
         c = getInstance();
         DayOfTheWeek = sDate().substring(0, sDate().indexOf(','));;
@@ -21,12 +24,16 @@ public class Day {
         Day = c.get(Calendar.DAY_OF_MONTH);
         Year = c.get(Calendar.YEAR);
     }
+    //endregion
 
+    //region Private Methods ####
     private String sDate() {
         SimpleDateFormat sdfDate = new SimpleDateFormat("E, MMM dd, yyyy", Locale.getDefault());
         return (sdfDate.format(c.getTime()));
     }
+    //endregion
 
+    //region Public Getters ####
     public String getDayOfTheWeek() {
         return DayOfTheWeek;
     }
@@ -42,4 +49,5 @@ public class Day {
     public int getYear() {
         return Year;
     }
+    //endregion
 }
