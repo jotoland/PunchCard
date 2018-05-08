@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
 
     public void snackBar(View view, String message, boolean listner) {
         if(listner) {
-            // TODO add a listner
+            // TODO add a listener
             Snackbar.make(view, message, 60000)
                     .setAction("Action", null).show();
         } else {
