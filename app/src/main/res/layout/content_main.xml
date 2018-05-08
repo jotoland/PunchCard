@@ -10,34 +10,36 @@
 
 <!-- Clock In -->
     <Button
-        android:id="@+id/btn_clockIn"
+        android:id="@+id/btn_clockInOutBtn"
         style="@android:style/Widget.Holo.Button.Toggle"
         android:layout_width="200dp"
         android:layout_height="75dp"
         android:layout_marginLeft="92dp"
-        android:layout_marginTop="42dp"
-        android:onClick="onClickClockIn"
-        android:text="Clock In"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="48dp"
+        android:onClick="onClickClkInOutBtn"
+        android:text="clkInOutBtn"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textSize="30dp"
+        android:textSize="25dp"
         android:theme="@android:style/Widget.Holo.Button.Toggle"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 <!-- Clock Out -->
     <Button
-        android:id="@+id/btn_clockOut"
+        android:id="@+id/btn_breakBtn"
         style="@android:style/Widget.Holo.Button.Toggle"
         android:layout_width="200dp"
         android:layout_height="75dp"
         android:layout_marginLeft="92dp"
-        android:layout_marginTop="58dp"
-        android:onClick="onClickClockOut"
-        android:text="Clock Out"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="56dp"
+        android:onClick="onClickBrkBtn"
+        android:text="brkBtn"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textSize="30dp"
+        android:textSize="25dp"
         android:theme="@android:style/Widget.Holo.Light.Button.Toggle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_clockIn" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_clockInOutBtn" />
 
 </android.support.constraint.ConstraintLayout>

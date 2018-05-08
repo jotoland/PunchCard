@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -21,6 +22,14 @@ public class MainActivity extends AppCompatActivity
 
     //region Private variables ####
     private Employee emp;
+    private boolean clkIn = false;
+    private boolean onBrk = false;
+    private boolean lunchBreak = false; // TODO Should we use a lunch break ? ?
+    private Button clkInOutBtn;
+    private Button brkBtn;
+
+    private String clkInOutBtnStr = "Clock In";
+    private String brkBtnStr = "Take a Break";
     //endregion
 
     //region Protected OnCreate Method ####
@@ -49,7 +58,15 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // TODO this needs to be done on first use of app, hook up to Firebase or Loca file?
+        clkInOutBtn = (Button) findViewById(R.id.btn_clockInOutBtn);
+        brkBtn = (Button) findViewById(R.id.btn_breakBtn);
+
+        if (!clkIn) {
+            brkBtn.setVisibility(View.GONE);
+            clkInOutBtn.setText(clkInOutBtnStr);
+        }
+
+        // TODO this needs to be done on first use of app, hook up to Firebase or Local file?
         emp = new Employee();
         emp.setName("Doug Funny");
     }
@@ -119,8 +136,8 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    public void snackBar(View view, String message, boolean listner) {
-        if(listner) {
+    public void snackBar(View view, String message, boolean listener) {
+        if(listener) {
             // TODO add a listener
             Snackbar.make(view, message, 60000)
                     .setAction("Action", null).show();
@@ -139,10 +156,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public String caveManTime(boolean isClockIn, boolean empBreak) {
-        Calendar c = cal();
-        Time empTimeStamp = new Time();
+        Time empTimeStamp;
         if(empBreak) {
             //TODO implement employee on break
+            empTimeStamp = emp.getEmpBreak();
         } else {
             if(isClockIn) {
                 empTimeStamp = emp.getClockIn();
@@ -159,10 +176,6 @@ public class MainActivity extends AppCompatActivity
         );
     }
 
-    public Calendar cal() {
-        return Calendar.getInstance();
-    }
-
     public Time getTimeStamp() {
         Time timeStamp = new Time();
         timeStamp.setCurrentTime();
@@ -170,14 +183,48 @@ public class MainActivity extends AppCompatActivity
     }
 
     //region Public OnClick Methods ####
-    public void onClickClockIn(View view) {
-        emp.setClockIn(getTimeStamp());
-        snackBar(view, "Clock IN: " + caveManTime(true, false), false);
+    public void onClickClkInOutBtn(View view) {
+        String msgStr;
+        if (!clkIn) {
+            emp.setClockIn(getTimeStamp());
+            clkInOutBtnStr = "Clock Out";
+            clkInOutBtn.setText(clkInOutBtnStr);
+            brkBtn.setVisibility(View.VISIBLE);
+            brkBtn.setText(brkBtnStr);
+            clkIn = true;
+            msgStr = "Clock In";
+        } else {
+            clkInOutBtnStr = "Clock In";
+            emp.setClockOut(getTimeStamp());
+            clkInOutBtn.setText(clkInOutBtnStr);
+            brkBtn.setVisibility(View.GONE);
+            clkIn = false;
+            onBrk = false;
+            msgStr = "Clock Out";
+            // TODO implement calculation of time
+        }
+
+        snackBar(view, msgStr + ": " + caveManTime(true, false), false);
     }
 
-    public void onClickClockOut(View view) {
-        emp.setClockOut(getTimeStamp());
-        snackBar(view, "Clock OUT: " + caveManTime(false, false), false);
+    public void onClickBrkBtn(View view) {
+        // TODO implement taking a break
+        String msgStr;
+        if (!onBrk) {
+            onBrk = true;
+            emp.setEmpBreak(getTimeStamp());
+            brkBtnStr = "End Break";
+            brkBtn.setText(brkBtnStr);
+            msgStr = "Break Start";
+        } else {
+            onBrk = false;
+            // TODO need to refactor this to setEmpBrkStart / setEmpBreakEnd maybe ? or just do the math ?
+            emp.setEmpBreak(getTimeStamp());
+            brkBtnStr = "Take a Break";
+            brkBtn.setText(brkBtnStr);
+            msgStr = "Break End";
+        }
+        snackBar(view, msgStr + ": " + caveManTime(false, true), false);
     }
     //endregion
 }
