@@ -1,5 +1,6 @@
 package com.vetealinfierno.punchcard;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity
             Snackbar.make(view, message, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            Snackbar.make(view, message, 60000).show();
+            Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
         }
     }
     //endregion
