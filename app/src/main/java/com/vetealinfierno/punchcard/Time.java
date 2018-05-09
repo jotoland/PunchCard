@@ -14,7 +14,7 @@ public class Time {
     //endregion
 
     //region Constructor ####
-    public Time() {
+    Time() {
         Hour = 0;
         Min = 0;
         Sec = 0;
@@ -41,7 +41,7 @@ public class Time {
     }
     //endregion
 
-    //region Public Setters ####
+    //region Public Clock Setters ####
     public void setCurrentTime() {
         setHour();
         setMin();
@@ -49,20 +49,32 @@ public class Time {
         setAMpm();
     }
 
-    public void setHour() {
-        Hour = c.get(Calendar.HOUR_OF_DAY);
+    private void setHour() {
+        this.Hour = c.get(Calendar.HOUR_OF_DAY);
     }
 
-    public void setMin() {
-        Min = c.get(Calendar.MINUTE);
+    private void setMin() {
+        this.Min = c.get(Calendar.MINUTE);
     }
 
-    public void setSec() {
-        Sec = c.get(Calendar.SECOND);
+    private void setSec() {
+        this.Sec = c.get(Calendar.SECOND);
     }
 
-    public void setAMpm() {
-        AMpm = c.get(Calendar.AM_PM);
+    private void setAMpm() {
+        this.AMpm = c.get(Calendar.AM_PM);
+    }
+
+    public void setEmpHour(int hour) {
+        this.Hour = hour;
+    }
+
+    public void setEmpMin(int min) {
+        this.Min = min;
+    }
+
+    public void setEmpSec(int sec) {
+        this.Sec = sec;
     }
     //endregion
 }

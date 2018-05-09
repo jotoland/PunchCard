@@ -16,8 +16,8 @@ public class Day {
     private int Year;
     //endregion
 
-    //regionn Constructor ####
-    public Day() {
+    //region Constructor ####
+    Day() {
         c = getInstance();
         DayOfTheWeek = sDate().substring(0, sDate().indexOf(','));;
         Month = c.get(Calendar.MONTH);

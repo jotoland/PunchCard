@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        clkInOutBtn = (Button) findViewById(R.id.btn_breakBtn);
-        brkBtn = (Button) findViewById(R.id.btn_clockInOutBtn);
+        clkInOutBtn = (Button) findViewById(R.id.btn_clockInOutBtn);
+        brkBtn = (Button) findViewById(R.id.btn_breakBtn);
 
         if (!clkIn) {
             brkBtn.setVisibility(View.GONE);
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity
     public void snackBar(View view, String message, boolean listener) {
         if(listener) {
             // TODO add a listener
-            Snackbar.make(view, message, 60000)
+            Snackbar.make(view, message, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
             Snackbar.make(view, message, 60000).show();
@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity
     public void onClickClkInOutBtn(View view) {
         String msgStr;
         if (!clkIn) {
+            // Clocking In Switch Button -> Clock Out
             emp.setClockIn(getTimeStamp());
             clkInOutBtnStr = "Clock Out";
             clkInOutBtn.setText(clkInOutBtnStr);
@@ -199,6 +200,7 @@ public class MainActivity extends AppCompatActivity
             clkIn = true;
             msgStr = "Clock In";
         } else {
+            // Clocking Out Switch Button -> Clock In
             clkInOutBtnStr = "Clock In";
             emp.setClockOut(getTimeStamp());
             clkInOutBtn.setText(clkInOutBtnStr);
@@ -217,6 +219,8 @@ public class MainActivity extends AppCompatActivity
         boolean brkStart = false;
         String msgStr;
         if (!onBrk) {
+            // Starting break Switch Break Button -> End Break
+            clkInOutBtn.setEnabled(false);
             brkStart = true;
             onBrk = true;
             emp.setEmpBrkStart(getTimeStamp());
@@ -224,8 +228,9 @@ public class MainActivity extends AppCompatActivity
             brkBtn.setText(brkBtnStr);
             msgStr = "Break Start";
         } else {
+            // Ending break Switch Break Button -> Take a break
+            clkInOutBtn.setEnabled(true);
             onBrk = false;
-            // TODO need to refactor this to setEmpBrkStart / setEmpBreakEnd maybe ? or just do the math ?
             emp.setEmpBrkEnd(getTimeStamp());
             brkBtnStr = "Take a Break";
             brkBtn.setText(brkBtnStr);
