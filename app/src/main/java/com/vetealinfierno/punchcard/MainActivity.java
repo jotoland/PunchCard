@@ -211,12 +211,10 @@ public class MainActivity extends AppCompatActivity
             msgStr = "Clock Out";
             // TODO implement calculation of time
         }
-
         snackBar(view, msgStr + ": " + caveManTime(true, false, false), false);
     }
 
     public void onClickBrkBtn(View view) {
-        // TODO implement taking a break
         boolean brkStart = false;
         String msgStr;
         if (!onBrk) {
@@ -238,6 +236,7 @@ public class MainActivity extends AppCompatActivity
             brkBtnStr = "Take a Break";
             brkBtn.setText(brkBtnStr);
             msgStr = "Break End";
+            // TODO implement rendering empBrkInterval
         }
         snackBar(view, msgStr + ": " + caveManTime(false, true, brkStart), false);
     }
