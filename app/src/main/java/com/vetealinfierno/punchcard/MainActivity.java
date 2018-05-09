@@ -221,7 +221,8 @@ public class MainActivity extends AppCompatActivity
         String msgStr;
         if (!onBrk) {
             // Starting break Switch Break Button -> End Break
-            clkInOutBtn.setEnabled(false);
+            clkInOutBtn.getBackground().setAlpha(25);
+            clkInOutBtn.setClickable(false);
             brkStart = true;
             onBrk = true;
             emp.setEmpBrkStart(getTimeStamp());
@@ -230,7 +231,8 @@ public class MainActivity extends AppCompatActivity
             msgStr = "Break Start";
         } else {
             // Ending break Switch Break Button -> Take a break
-            clkInOutBtn.setEnabled(true);
+            clkInOutBtn.getBackground().setAlpha(255);
+            clkInOutBtn.setClickable(true);
             onBrk = false;
             emp.setEmpBrkEnd(getTimeStamp());
             brkBtnStr = "Take a Break";
