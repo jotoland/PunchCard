@@ -1,5 +1,6 @@
 package com.vetealinfierno.punchcard;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -21,6 +23,14 @@ public class MainActivity extends AppCompatActivity
 
     //region Private variables ####
     private Employee emp;
+    private boolean clkIn = false;
+    private boolean onBrk = false;
+    private boolean lunchBreak = false; // TODO Should we use a lunch break ? ?
+    private Button clkInOutBtn;
+    private Button brkBtn;
+
+    private String clkInOutBtnStr = "Clock In";
+    private String brkBtnStr = "Take a Break";
     //endregion
 
     //region Protected OnCreate Method ####
@@ -49,7 +59,15 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // TODO this needs to be done on first use of app, hook up to Firebase or Loca file?
+        clkInOutBtn = (Button) findViewById(R.id.btn_clockInOutBtn);
+        brkBtn = (Button) findViewById(R.id.btn_breakBtn);
+
+        if (!clkIn) {
+            brkBtn.setVisibility(View.GONE);
+            clkInOutBtn.setText(clkInOutBtnStr);
+        }
+
+        // TODO this needs to be done on first use of app, hook up to Firebase or Local file?
         emp = new Employee();
         emp.setName("Doug Funny");
     }
@@ -119,30 +137,34 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    public void snackBar(View view, String message, boolean listner) {
-        if(listner) {
-            // TODO add a listner
-            Snackbar.make(view, message, 60000)
+    public void snackBar(View view, String message, boolean listener) {
+        if(listener) {
+            // TODO add a listener
+            Snackbar.make(view, message, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            Snackbar.make(view, message, 60000).show();
+            Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
         }
     }
     //endregion
 
-    public String convertAMPM(int amPm) {
+    //region Private Methods ####
+    private String convertAMPM(int amPm) {
         if (amPm == 1) { return "PM"; } else { return "AM"; }
     }
 
-    public int convertHour(int hour) {
+    private int convertHour(int hour) {
         if (hour > 12) { return hour - 12; } else { return hour; }
     }
 
-    public String caveManTime(boolean isClockIn, boolean empBreak) {
-        Calendar c = cal();
-        Time empTimeStamp = new Time();
+    private String caveManTime(boolean isClockIn, boolean empBreak, boolean brkStrt) {
+        Time empTimeStamp;
         if(empBreak) {
-            //TODO implement employee on break
+            if(brkStrt) {
+                empTimeStamp = emp.getEmpBrkStart();
+            } else {
+                empTimeStamp = emp.getEmpBrkEnd();
+            }
         } else {
             if(isClockIn) {
                 empTimeStamp = emp.getClockIn();
@@ -159,25 +181,64 @@ public class MainActivity extends AppCompatActivity
         );
     }
 
-    public Calendar cal() {
-        return Calendar.getInstance();
-    }
-
-    public Time getTimeStamp() {
+    private Time getTimeStamp() {
         Time timeStamp = new Time();
         timeStamp.setCurrentTime();
         return timeStamp;
     }
+    //endregion
 
     //region Public OnClick Methods ####
-    public void onClickClockIn(View view) {
-        emp.setClockIn(getTimeStamp());
-        snackBar(view, "Clock IN: " + caveManTime(true, false), false);
+    public void onClickClkInOutBtn(View view) {
+        String msgStr;
+        if (!clkIn) {
+            // Clocking In Switch Button -> Clock Out
+            emp.setClockIn(getTimeStamp());
+            clkInOutBtnStr = "Clock Out";
+            clkInOutBtn.setText(clkInOutBtnStr);
+            brkBtn.setVisibility(View.VISIBLE);
+            brkBtn.setText(brkBtnStr);
+            clkIn = true;
+            msgStr = "Clock In";
+        } else {
+            // Clocking Out Switch Button -> Clock In
+            clkInOutBtnStr = "Clock In";
+            emp.setClockOut(getTimeStamp());
+            clkInOutBtn.setText(clkInOutBtnStr);
+            brkBtn.setVisibility(View.GONE);
+            clkIn = false;
+            onBrk = false;
+            msgStr = "Clock Out";
+            // TODO implement calculation of time
+        }
+        snackBar(view, msgStr + ": " + caveManTime(true, false, false), false);
     }
 
-    public void onClickClockOut(View view) {
-        emp.setClockOut(getTimeStamp());
-        snackBar(view, "Clock OUT: " + caveManTime(false, false), false);
+    public void onClickBrkBtn(View view) {
+        boolean brkStart = false;
+        String msgStr;
+        if (!onBrk) {
+            // Starting break Switch Break Button -> End Break
+            clkInOutBtn.getBackground().setAlpha(25);
+            clkInOutBtn.setClickable(false);
+            brkStart = true;
+            onBrk = true;
+            emp.setEmpBrkStart(getTimeStamp());
+            brkBtnStr = "End Break";
+            brkBtn.setText(brkBtnStr);
+            msgStr = "Break Start";
+        } else {
+            // Ending break Switch Break Button -> Take a break
+            clkInOutBtn.getBackground().setAlpha(255);
+            clkInOutBtn.setClickable(true);
+            onBrk = false;
+            emp.setEmpBrkEnd(getTimeStamp());
+            brkBtnStr = "Take a Break";
+            brkBtn.setText(brkBtnStr);
+            msgStr = "Break End";
+            // TODO implement rendering empBrkInterval
+        }
+        snackBar(view, msgStr + ": " + caveManTime(false, true, brkStart), false);
     }
     //endregion
 }
