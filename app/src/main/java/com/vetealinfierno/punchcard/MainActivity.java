@@ -176,7 +176,6 @@ public class MainActivity extends AppCompatActivity
                 empTimeStamp = emp.getClockOut();
             }
         }
-
         return (
                 emp.Today().getDayOfTheWeek() + " " + emp.Today().getMonth() + " / "
                         + emp.Today().getDay() + " / " + emp.Today().getYear()
@@ -192,6 +191,19 @@ public class MainActivity extends AppCompatActivity
         return timeStamp;
     }
 
+    private void setBrkText() {
+        ArrayList<Time> tempList = emp.getEmpBrkTStpList();
+        String tempString;
+        if (tempList.size() < 11) {
+            int brkNum = tempList.size() - 1;
+            Time tempStamp = tempList.get(brkNum);
+            tempString = "Break " + (brkNum + 1) + "| Length: "+ convertHour(tempStamp.getHour()) + ":"
+                    + tempStamp.getMin() + ":" + tempStamp.getSec();
+        } else {
+            tempString = "Max Breaks Reached";
+        }
+        brkTxtView.setText(tempString);
+    }
     //endregion
 
     //region Public OnClick Methods ####
@@ -215,7 +227,7 @@ public class MainActivity extends AppCompatActivity
             clkIn = false;
             onBrk = false;
             msgStr = "Clock Out";
-            if(emp.getBrkTSpListSize() == 10) {
+            if (emp.getBrkTSpListSize() == 10) {
                 emp.getEmpBrkTStpList().clear();
                 brkTxtView.setText(null);
                 brkBtn.getBackground().setAlpha(255);
@@ -259,17 +271,4 @@ public class MainActivity extends AppCompatActivity
     }
     //endregion
 
-    private void setBrkText() {
-        ArrayList<Time> tempList = emp.getEmpBrkTStpList();
-        String tempString;
-        if (tempList.size() < 11) {
-            int brkNum = tempList.size() - 1;
-            Time tempStamp = tempList.get(brkNum);
-            tempString = "Break " + (brkNum + 1) + "| Length: "+ convertHour(tempStamp.getHour()) + ":"
-                    + tempStamp.getMin() + ":" + tempStamp.getSec();
-        } else {
-            tempString = "Max Breaks Reached";
-        }
-        brkTxtView.setText(tempString);
-    }
 }
