@@ -1,11 +1,6 @@
 package com.vetealinfierno.punchcard;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
 
 // Employee is for each user, stores name, timeIN/Out and breaks
 public class Employee {
@@ -20,14 +15,15 @@ public class Employee {
     private Time clockOut;
     private Time empBrkStart;
     private Time empBrkEnd;
-    private Time brkIntervalTStp;
     private Day today;
-    //private List<Integer> empShifts;  // TODO Do we need this ??
-    private HashMap<String, Integer> empBreaks;
+    private ArrayList<Integer> empBrkInSecList;
+    private ArrayList<Time> empBrkTStpList;
+    // TODO Do we need this ??
+    //private List<Integer> empShifts;
     //endregion
 
     //region Constructor ####
-    // No modifier is package-private
+    // No modifier is package-private (default)
     Employee() {
         Name = "Doug Funny";
         clockIn = new Time();
@@ -35,7 +31,8 @@ public class Employee {
         empBrkStart = new Time();
         empBrkEnd = new Time();
         today = new Day();
-        empBreaks = new HashMap<>(MAX_BREAKS);
+        empBrkInSecList = new ArrayList<>(MAX_BREAKS);
+        empBrkTStpList = new ArrayList<>(MAX_BREAKS);
         //empShifts = new ArrayList<>();
     }
     //endregion
@@ -65,12 +62,16 @@ public class Employee {
         return empBrkEnd;
     }
 
-    public HashMap<String, Integer> getEmpBrks(){
-        return empBreaks;
+    public ArrayList<Integer> getEmpBrkInSecList(){
+        return empBrkInSecList;
     }
 
-    public Time getEmpBrkInterval() {
-        return brkIntervalTStp;
+    public ArrayList<Time> getEmpBrkTStpList() {
+        return empBrkTStpList;
+    }
+
+    public int getBrkTSpListSize() {
+        return empBrkTStpList.size();
     }
     //endregion
 
@@ -89,29 +90,31 @@ public class Employee {
 
     public void setEmpBrkStart(Time empBrkStart) {
         this.empBrkStart = empBrkStart;
+        if (getBrkTSpListSize() == MAX_BREAKS) {
+            return;
+        }
     }
 
     public void setEmpBrkEnd(Time empBrkEnd) {
         this.empBrkEnd = empBrkEnd;
-        calculateBreakInterval(this.empBrkStart, this.empBrkEnd);
-    }
-
-    private void setEmpBreaks(String type, int breakInterval) {
-        this.empBreaks.put(type, breakInterval);
+        captureBrk(this.empBrkStart, this.empBrkEnd);
     }
     //endregion
 
-    private void calculateBreakInterval(Time brkStart, Time brkEnd) {
-        brkIntervalTStp = new Time();
+    //region Private Methods: Breaks ####
+    private void captureBrk(Time brkStart, Time brkEnd) {
+        Time brkIntervalTStp = new Time();
         brkIntervalTStp.setEmpHour(brkEnd.getHour() - brkStart.getHour());
         brkIntervalTStp.setEmpMin(brkEnd.getMin() -  brkStart.getMin());
         brkIntervalTStp.setEmpSec(brkEnd.getSec() - brkStart.getSec());
         // TODO implement a TYPE of breaks, like lunch and general or what not...
-        setEmpBreaks("GEN", getIntervalInSeconds(brkIntervalTStp.getHour(), brkIntervalTStp.getMin(), brkIntervalTStp.getSec()));
+        this.empBrkTStpList.add(brkIntervalTStp);
+        this.empBrkInSecList.add(getIntervalInSeconds(brkIntervalTStp.getHour(), brkIntervalTStp.getMin(), brkIntervalTStp.getSec()));
     }
 
     private int getIntervalInSeconds(int hour, int min, int sec) {
         return (hour * 3600 + min * 60 + sec);
     }
+    //endregion
 
 }

@@ -14,8 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity
     private boolean lunchBreak = false; // TODO Should we use a lunch break ? ?
     private Button clkInOutBtn;
     private Button brkBtn;
-
+    private TextView brkTxtView;
     private String clkInOutBtnStr = "Clock In";
     private String brkBtnStr = "Take a Break";
     //endregion
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity
 
         clkInOutBtn = (Button) findViewById(R.id.btn_clockInOutBtn);
         brkBtn = (Button) findViewById(R.id.btn_breakBtn);
+        brkTxtView = (TextView) findViewById(R.id.tview_brkText);
 
         if (!clkIn) {
             brkBtn.setVisibility(View.GONE);
@@ -173,11 +176,13 @@ public class MainActivity extends AppCompatActivity
                 empTimeStamp = emp.getClockOut();
             }
         }
-        int hour = convertHour(empTimeStamp.getHour());
 
         return (
-                emp.Today().getDayOfTheWeek() + " " + emp.Today().getMonth() + " / " + emp.Today().getDay() + " / " + emp.Today().getYear()
-                        + " @ " + hour + ":" + empTimeStamp.getMin() + ":" + empTimeStamp.getSec() + "  " + convertAMPM(empTimeStamp.getAMpm())
+                emp.Today().getDayOfTheWeek() + " " + emp.Today().getMonth() + " / "
+                        + emp.Today().getDay() + " / " + emp.Today().getYear()
+                        + " @ " + convertHour(empTimeStamp.getHour()) + ":"
+                        + empTimeStamp.getMin() + ":" + empTimeStamp.getSec()
+                        + "  " + convertAMPM(empTimeStamp.getAMpm())
         );
     }
 
@@ -186,6 +191,7 @@ public class MainActivity extends AppCompatActivity
         timeStamp.setCurrentTime();
         return timeStamp;
     }
+
     //endregion
 
     //region Public OnClick Methods ####
@@ -209,6 +215,12 @@ public class MainActivity extends AppCompatActivity
             clkIn = false;
             onBrk = false;
             msgStr = "Clock Out";
+            if(emp.getBrkTSpListSize() == 10) {
+                emp.getEmpBrkTStpList().clear();
+                brkTxtView.setText(null);
+                brkBtn.getBackground().setAlpha(255);
+                brkBtn.setClickable(true);
+            }
             // TODO implement calculation of time
         }
         snackBar(view, msgStr + ": " + caveManTime(true, false, false), false);
@@ -237,8 +249,27 @@ public class MainActivity extends AppCompatActivity
             brkBtn.setText(brkBtnStr);
             msgStr = "Break End";
             // TODO implement rendering empBrkInterval
+            if (emp.getEmpBrkTStpList().size() == 10) {
+                brkBtn.getBackground().setAlpha(25);
+                brkBtn.setClickable(false);
+            }
+            setBrkText();
         }
         snackBar(view, msgStr + ": " + caveManTime(false, true, brkStart), false);
     }
     //endregion
+
+    private void setBrkText() {
+        ArrayList<Time> tempList = emp.getEmpBrkTStpList();
+        String tempString;
+        if (tempList.size() < 11) {
+            int brkNum = tempList.size() - 1;
+            Time tempStamp = tempList.get(brkNum);
+            tempString = "Break " + (brkNum + 1) + "| Length: "+ convertHour(tempStamp.getHour()) + ":"
+                    + tempStamp.getMin() + ":" + tempStamp.getSec();
+        } else {
+            tempString = "Max Breaks Reached";
+        }
+        brkTxtView.setText(tempString);
+    }
 }
