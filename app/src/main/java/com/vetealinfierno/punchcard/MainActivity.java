@@ -1,6 +1,5 @@
 package com.vetealinfierno.punchcard;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,9 +15,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -270,5 +267,4 @@ public class MainActivity extends AppCompatActivity
         snackBar(view, msgStr + ": " + caveManTime(false, true, brkStart), false);
     }
     //endregion
-
 }
